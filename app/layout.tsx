@@ -45,7 +45,7 @@ function Footer() {
     }}>
       Research by Arturo R. Almaguer ·{" "}
       <a href="https://arxiv.org/abs/2603.21852" style={{ color: "#4facfe" }}>arXiv:2603.21852</a>
-      {" "}· 24 theorems · 315+ equations · 4 patents filed ·{" "}
+      {" "}· 18 theorems · 315+ equations · 4 patents filed ·{" "}
       <a href="https://monogate.org" style={{ color: "#4facfe" }}>monogate.org</a> ·{" "}
       <a href="https://monogate.dev" style={{ color: "#4facfe" }}>monogate.dev</a> ·{" "}
       <a href="https://github.com/almaguer1986/monogate" style={{ color: "#4facfe" }}>GitHub</a> ·{" "}
