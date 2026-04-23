@@ -69,9 +69,35 @@ function Footer() {
   );
 }
 
+const projectLd = {
+  "@context": "https://schema.org",
+  "@type": "ResearchProject",
+  name: "Monogate",
+  alternateName: "monogate.dev — The EML Challenge Board",
+  description:
+    "Open problems in the EML operator: construct sin, cos, π, i from eml(x,y) = exp(x) − ln(y). Interactive lab, leaderboard, and symbolic tools.",
+  url: siteUrl,
+  sameAs: [
+    "https://monogate.org",
+    "https://github.com/almaguer1986/monogate",
+    "https://github.com/almaguer1986/monogate-lean",
+    "https://pypi.org/project/monogate/",
+    "https://arxiv.org/abs/2603.21852",
+  ],
+  codeRepository: "https://github.com/almaguer1986/monogate",
+  author: { "@type": "Organization", name: "Monogate Research" },
+  license: "https://opensource.org/licenses/MIT",
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(projectLd) }}
+        />
+      </head>
       <body>
         <Nav />
         {children}
