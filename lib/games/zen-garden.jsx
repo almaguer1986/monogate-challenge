@@ -737,7 +737,7 @@ export default function ZenGarden() {
           style={S.select}
         >
           {Object.entries(PRESETS).map(([k, v]) => (
-            <option key={k} value={k}>{v.name}</option>
+            <option key={k} value={k} style={S.option}>{v.name}</option>
           ))}
         </select>
 
@@ -833,7 +833,7 @@ export default function ZenGarden() {
                         onChange={(e) => updateNode(i, { op: e.target.value })}
                         style={S.selectInline}
                       >
-                        {Object.keys(OPS).map((k) => <option key={k} value={k}>{k}</option>)}
+                        {Object.keys(OPS).map((k) => <option key={k} value={k} style={S.option}>{k}</option>)}
                       </select>
                     </div>
 
@@ -986,9 +986,18 @@ const S = {
   divider: { width: 1, height: 20, background: "rgba(255,255,255,0.08)", margin: "0 4px" },
 
   select: {
-    background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.85)",
-    border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4,
+    // Opaque dark bg so the browser's option popup inherits a readable
+    // surface (rgba backgrounds leaked white-on-white on Windows/Chrome).
+    background: "#1a1f2e", color: "#e0e0e0",
+    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 4,
     padding: "5px 10px", fontSize: 11, fontFamily: FONT, cursor: "pointer",
+    WebkitAppearance: "none", MozAppearance: "none", appearance: "none",
+    // Inline SVG chevron so the control reads as a dropdown without the
+    // native chrome that varies per OS.
+    backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%23e0e0e0' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>\")",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 8px center",
+    paddingRight: 24,
   },
 
   mainWrap: {
@@ -1048,10 +1057,17 @@ const S = {
   lbl: { fontSize: 10, color: "rgba(255,255,255,0.4)" },
   lblValue: { fontSize: 10, color: "rgba(255,255,255,0.65)", minWidth: 32 },
   slider: { flex: 1, accentColor: "#a18cd1", minWidth: 48 },
+  option: {
+    background: "#1a1f2e", color: "#e0e0e0",
+  },
   selectInline: {
-    background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.85)",
-    border: "1px solid rgba(255,255,255,0.08)", borderRadius: 3,
-    padding: "2px 6px", fontSize: 10, fontFamily: FONT, cursor: "pointer",
+    background: "#1a1f2e", color: "#e0e0e0",
+    border: "1px solid rgba(255,255,255,0.12)", borderRadius: 3,
+    padding: "2px 22px 2px 6px", fontSize: 10, fontFamily: FONT, cursor: "pointer",
+    WebkitAppearance: "none", MozAppearance: "none", appearance: "none",
+    backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'><path d='M1 1l3 3 3-3' stroke='%23e0e0e0' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>\")",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 6px center",
   },
   dot: { width: 8, height: 8, borderRadius: "50%" },
   xBtn: {
