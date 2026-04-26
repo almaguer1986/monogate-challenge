@@ -60,7 +60,7 @@ function Footer() {
     }}>
       Monogate Research ·{" "}
       <a href="https://arxiv.org/abs/2603.21852" style={{ color: "#4facfe" }}>arXiv:2603.21852</a>
-      {" "}· 49 Lean theorems · 265 equations · EML Cost Conjecture (in development) ·{" "}
+      {" "}· 50 Lean theorems · 265 equations · EML Cost Conjecture (in development) ·{" "}
       <a href="https://monogate.org" style={{ color: "#4facfe" }}>monogate.org</a> ·{" "}
       <a href="https://monogate.dev" style={{ color: "#4facfe" }}>monogate.dev</a> ·{" "}
       <a href="https://github.com/almaguer1986/monogate" style={{ color: "#4facfe" }}>GitHub</a> ·{" "}
