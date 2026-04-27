@@ -71,7 +71,7 @@ n = count_nodes(tree)`}</Code>
       <H2>Links</H2>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {[
-          { href: "https://github.com/almaguer1986/monogate", label: "GitHub — source code" },
+          { href: "https://github.com/agent-maestro/monogate", label: "GitHub — source code" },
           { href: "https://www.npmjs.com/package/monogate", label: "npm — JavaScript package" },
           { href: "https://pypi.org/project/monogate/", label: "PyPI — Python package" },
           { href: "https://arxiv.org/abs/2603.21852", label: "arXiv:2603.21852 — Odrzywołek 2026" },

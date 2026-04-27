@@ -98,7 +98,7 @@ export default function LandingPage() {
         <div style={{ display: "flex", gap: 16 }}>
           {[
             { href: "https://arxiv.org/abs/2603.21852", label: "arXiv:2603.21852" },
-            { href: "https://github.com/almaguer1986/monogate", label: "GitHub" },
+            { href: "https://github.com/agent-maestro/monogate", label: "GitHub" },
             { href: "https://www.npmjs.com/package/monogate", label: "npm" },
             { href: "https://monogate.org", label: "monogate.org" },
           ].map(({ href, label }) => (

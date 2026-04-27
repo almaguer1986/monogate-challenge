@@ -231,8 +231,8 @@ export default function HowToSubmitPage() {
         fontSize: 10, color: C.muted,
       }}>
         <a href="/challenge" style={{ color: C.muted }}>← All challenges</a>
-        <a href="https://github.com/almaguer1986/monogate" target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>
-          github.com/almaguer1986/monogate
+        <a href="https://github.com/agent-maestro/monogate" target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>
+          github.com/agent-maestro/monogate
         </a>
       </footer>
     </div>

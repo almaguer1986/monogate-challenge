@@ -300,7 +300,7 @@ export default function ConjugacyViewer() {
         matching point.
         <br /><br />
         Lean formalization: <code>eal_exl_conjugacy</code> in{" "}
-        <a href="https://github.com/almaguer1986/monogate-lean/blob/master/MonogateEML/SelfMapConjugacy.lean"
+        <a href="https://github.com/agent-maestro/monogate-lean/blob/master/MonogateEML/SelfMapConjugacy.lean"
            style={{ color: "#4facfe" }} target="_blank" rel="noreferrer">
           SelfMapConjugacy.lean</a>{" "}
         (0 sorries).

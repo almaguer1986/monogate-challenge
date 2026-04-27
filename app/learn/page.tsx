@@ -66,7 +66,7 @@ export default function LearnIndexPage() {
         <p style={{ fontSize: "0.85rem", color: "#666", marginTop: 16, fontFamily: "monospace" }}>
           Dataset {dataset.dataset_version} · schema {dataset.schema_version} ·{" "}
           <a
-            href="https://github.com/almaguer1986/monogate-lean"
+            href="https://github.com/agent-maestro/monogate-lean"
             style={{ color: ACCENT_CYAN }}
           >
             monogate-lean source ↗
@@ -164,7 +164,7 @@ export default function LearnIndexPage() {
                   >
                     [walk-through coming soon — view records in the dataset on{" "}
                     <a
-                      href="https://github.com/almaguer1986/monogate-lean"
+                      href="https://github.com/agent-maestro/monogate-lean"
                       style={{ color: accent }}
                     >
                       GitHub

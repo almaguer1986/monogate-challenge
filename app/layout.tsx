@@ -63,7 +63,7 @@ function Footer() {
       {" "}· 50 Lean theorems · 265 equations · EML Cost Conjecture (in development) ·{" "}
       <a href="https://monogate.org" style={{ color: "#4facfe" }}>monogate.org</a> ·{" "}
       <a href="https://monogate.dev" style={{ color: "#4facfe" }}>monogate.dev</a> ·{" "}
-      <a href="https://github.com/almaguer1986/monogate" style={{ color: "#4facfe" }}>GitHub</a> ·{" "}
+      <a href="https://github.com/agent-maestro/monogate" style={{ color: "#4facfe" }}>GitHub</a> ·{" "}
       <a href="https://pypi.org/project/monogate/" style={{ color: "#4facfe" }}>PyPI</a>
     </footer>
   );
@@ -79,12 +79,12 @@ const projectLd = {
   url: siteUrl,
   sameAs: [
     "https://monogate.org",
-    "https://github.com/almaguer1986/monogate",
-    "https://github.com/almaguer1986/monogate-lean",
+    "https://github.com/agent-maestro/monogate",
+    "https://github.com/agent-maestro/monogate-lean",
     "https://pypi.org/project/monogate/",
     "https://arxiv.org/abs/2603.21852",
   ],
-  codeRepository: "https://github.com/almaguer1986/monogate",
+  codeRepository: "https://github.com/agent-maestro/monogate",
   author: { "@type": "Organization", name: "Monogate Research" },
   license: "https://opensource.org/licenses/MIT",
 };

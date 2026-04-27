@@ -78,5 +78,5 @@ export const LANE_DESCRIPTIONS: Record<number, { title: string; subtitle: string
 export function ghLink(file: string, line: number): string {
   // Source repo + branch from monogate-lean. Branch is master per the
   // seed v1 dataset card.
-  return `https://github.com/almaguer1986/monogate-lean/blob/master/${file}#L${line}`;
+  return `https://github.com/agent-maestro/monogate-lean/blob/master/${file}#L${line}`;
 }

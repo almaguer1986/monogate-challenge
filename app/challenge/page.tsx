@@ -255,7 +255,7 @@ export default async function HomePage() {
           <PillLink href="/challenge/search" label="Search tool" internal />
           <PillLink href="/explorer" label="Explorer" internal />
           <PillLink href="https://www.npmjs.com/package/monogate" label="npm ↗" />
-          <PillLink href="https://github.com/almaguer1986/monogate" label="GitHub ↗" />
+          <PillLink href="https://github.com/agent-maestro/monogate" label="GitHub ↗" />
         </div>
       </div>
 
@@ -305,7 +305,7 @@ export default async function HomePage() {
           {[
             { href: "/explorer", label: "Explorer" },
             { href: "https://www.npmjs.com/package/monogate", label: "npm" },
-            { href: "https://github.com/almaguer1986/monogate", label: "GitHub" },
+            { href: "https://github.com/agent-maestro/monogate", label: "GitHub" },
             { href: "https://arxiv.org/abs/2603.21852", label: "arXiv" },
           ].map(({ href, label }) => (
             <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>
