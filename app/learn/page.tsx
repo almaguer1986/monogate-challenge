@@ -73,6 +73,33 @@ export default function LearnIndexPage() {
           </a>{" "}
           · CC BY 4.0
         </p>
+        <div style={{
+          marginTop: 24, display: "flex", gap: 12, flexWrap: "wrap",
+          fontFamily: "monospace", fontSize: 12,
+        }}>
+          <a
+            href="/learn/leaderboard"
+            style={{
+              color: ACCENT_GOLD, textDecoration: "none",
+              border: `1px solid ${ACCENT_GOLD}40`,
+              padding: "6px 14px", borderRadius: 6,
+              background: `${ACCENT_GOLD}08`,
+            }}
+          >
+            🏆 Leaderboard
+          </a>
+          <a
+            href="https://github.com/agent-maestro/monogate-research/tree/master/petal"
+            style={{
+              color: ACCENT_PURPLE, textDecoration: "none",
+              border: `1px solid ${ACCENT_PURPLE}40`,
+              padding: "6px 14px", borderRadius: 6,
+              background: `${ACCENT_PURPLE}08`,
+            }}
+          >
+            🤖 PETAL API for agents ↗
+          </a>
+        </div>
       </header>
 
       <section style={{ marginBottom: 32 }}>
