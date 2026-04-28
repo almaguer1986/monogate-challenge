@@ -15,7 +15,7 @@
  * or any deployed PETAL API. The API URL is configurable per visitor.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Health = {
   status: string;
@@ -68,11 +68,19 @@ type LabState = {
   apiUrl: string;
   agentId: string;
   completed: string[];
+  /**
+   * Opt-in flag. Lane 1 must render fully without any network
+   * traffic; a fetch to `http://localhost:8000` from an HTTPS
+   * page can trigger Edge's "Access other apps and services on
+   * this device" permission prompt. We require an explicit user
+   * click before issuing any cross-origin fetch.
+   */
+  apiOptIn: boolean;
 };
 
 function loadState(): LabState {
   if (typeof window === "undefined") {
-    return { apiUrl: DEFAULT_API, agentId: "", completed: [] };
+    return { apiUrl: DEFAULT_API, agentId: "", completed: [], apiOptIn: false };
   }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -82,12 +90,31 @@ function loadState(): LabState {
         apiUrl: parsed.apiUrl || DEFAULT_API,
         agentId: parsed.agentId || "",
         completed: parsed.completed || [],
+        apiOptIn: parsed.apiOptIn === true,
       };
     }
   } catch {
     // ignore
   }
-  return { apiUrl: DEFAULT_API, agentId: "", completed: [] };
+  return { apiUrl: DEFAULT_API, agentId: "", completed: [], apiOptIn: false };
+}
+
+/** Fetch helper that times out cleanly so we never hang the UI
+ *  if localhost is unreachable. Returns null on any error. */
+async function safeFetch(
+  url: string,
+  init?: RequestInit,
+  timeoutMs = 2500,
+): Promise<Response | null> {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    const r = await fetch(url, { ...(init ?? {}), signal: ctrl.signal });
+    clearTimeout(t);
+    return r;
+  } catch {
+    return null;
+  }
 }
 
 function saveState(state: LabState) {
@@ -122,38 +149,42 @@ export function PetalLab({
     saveState(state);
   }, [state]);
 
-  // Auto-health-check on apiUrl change (debounced)
-  const healthTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // OPT-IN ONLY: no auto-fetch. Health checks only happen after
+  // the user explicitly clicks "connect API" or has previously
+  // opted in (apiOptIn=true). This prevents Edge from showing
+  // "Access other apps and services on this device" on first
+  // page load when the page is HTTPS and the API is on localhost.
   useEffect(() => {
-    if (healthTimer.current) clearTimeout(healthTimer.current);
-    healthTimer.current = setTimeout(() => {
-      checkHealth();
-    }, 200);
-    return () => {
-      if (healthTimer.current) clearTimeout(healthTimer.current);
-    };
+    if (!state.apiOptIn) return;
+    checkHealth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.apiUrl]);
+  }, [state.apiOptIn]);
 
   async function checkHealth() {
-    if (!state.apiUrl) return;
+    if (!state.apiUrl || !state.apiOptIn) return;
     setHealthChecking(true);
     setHealthError("");
-    try {
-      const r = await fetch(state.apiUrl.replace(/\/+$/, "") + "/api/petal/health");
-      if (!r.ok) {
-        setHealth(null);
-        setHealthError(`HTTP ${r.status}`);
-      } else {
+    const url = state.apiUrl.replace(/\/+$/, "") + "/api/petal/health";
+    const r = await safeFetch(url);
+    if (!r) {
+      setHealth(null);
+      setHealthError("unreachable");
+      setHealthChecking(false);
+      return;
+    }
+    if (!r.ok) {
+      setHealth(null);
+      setHealthError(`HTTP ${r.status}`);
+    } else {
+      try {
         const body = (await r.json()) as Health;
         setHealth(body);
+      } catch {
+        setHealth(null);
+        setHealthError("bad JSON");
       }
-    } catch (e) {
-      setHealth(null);
-      setHealthError(e instanceof Error ? e.message : "fetch failed");
-    } finally {
-      setHealthChecking(false);
     }
+    setHealthChecking(false);
   }
 
   function setApiUrl(url: string) {
@@ -161,6 +192,14 @@ export function PetalLab({
   }
   function setAgentId(id: string) {
     setState((s) => ({ ...s, agentId: id }));
+  }
+  function connectApi() {
+    setState((s) => ({ ...s, apiOptIn: true }));
+  }
+  function disconnectApi() {
+    setState((s) => ({ ...s, apiOptIn: false }));
+    setHealth(null);
+    setHealthError("");
   }
 
   return (
@@ -201,7 +240,18 @@ export function PetalLab({
           health={health}
           error={healthError}
           checking={healthChecking}
+          optIn={state.apiOptIn}
         />
+
+        {!state.apiOptIn ? (
+          <button onClick={connectApi} style={btnStyle()}>
+            Connect API
+          </button>
+        ) : (
+          <button onClick={disconnectApi} style={btnStyle()}>
+            Disconnect
+          </button>
+        )}
 
         <span style={{ color: TEXT_DIM }}>
           Progress:{" "}
@@ -275,14 +325,19 @@ function HealthBadge({
   health,
   error,
   checking,
+  optIn,
 }: {
   health: Health | null;
   error: string;
   checking: boolean;
+  optIn: boolean;
 }) {
   let color = TEXT_DIMMER;
-  let label = "—";
-  if (checking) {
+  let label = "offline (click Connect)";
+  if (!optIn) {
+    color = TEXT_DIMMER;
+    label = "offline (click Connect)";
+  } else if (checking) {
     color = ORANGE;
     label = "checking…";
   } else if (health) {
@@ -290,7 +345,7 @@ function HealthBadge({
     label = `ok · v${health.dataset_version} · ${health.records} records · ${health.attempts_logged ?? 0} attempts`;
   } else if (error) {
     color = RED;
-    label = "down";
+    label = `unreachable (${error})`;
   }
   return (
     <span
@@ -385,6 +440,13 @@ export function TheoremActions({
   }
 
   async function postAttempt(result: "solved" | "failed") {
+    if (!state.apiOptIn) {
+      setPostStatus({
+        kind: "err",
+        msg: "API not connected — click Connect API in the dock at the top.",
+      });
+      return;
+    }
     if (!state.agentId) {
       setPostStatus({
         kind: "err",
@@ -394,67 +456,67 @@ export function TheoremActions({
     }
     setPosting(true);
     setPostStatus({ kind: "", msg: "" });
-    try {
-      const r = await fetch(
-        state.apiUrl.replace(/\/+$/, "") + "/api/petal/attempt",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            theorem_id: theoremId,
-            agent_id: state.agentId,
-            tactics_tried: tactics
-              .split(",")
-              .map((t) => t.trim())
-              .filter(Boolean),
-            result,
-            proof_text: proof || null,
-            error_message: errMsg || null,
-            failure_reason: why || null,
-            lane: 1,
-          }),
-        }
-      );
-      if (!r.ok) {
-        const body = await r.text();
-        setPostStatus({ kind: "err", msg: `HTTP ${r.status}: ${body.slice(0, 200)}` });
-      } else {
-        const body = (await r.json()) as { total_attempts?: number };
-        setPostStatus({
-          kind: "ok",
-          msg: `logged · total attempts: ${body.total_attempts ?? "?"}`,
-        });
-        if (result === "solved") {
-          // Auto-mark complete on success
-          if (!isDone) toggleDone();
-        }
-      }
-    } catch (e) {
+    const r = await safeFetch(
+      state.apiUrl.replace(/\/+$/, "") + "/api/petal/attempt",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          theorem_id: theoremId,
+          agent_id: state.agentId,
+          tactics_tried: tactics
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean),
+          result,
+          proof_text: proof || null,
+          error_message: errMsg || null,
+          failure_reason: why || null,
+          lane: 1,
+        }),
+      },
+      4000,
+    );
+    if (!r) {
+      setPostStatus({ kind: "err", msg: "API unreachable." });
+    } else if (!r.ok) {
+      const body = await r.text().catch(() => "");
+      setPostStatus({ kind: "err", msg: `HTTP ${r.status}: ${body.slice(0, 200)}` });
+    } else {
+      const body = (await r.json().catch(() => ({}))) as { total_attempts?: number };
       setPostStatus({
-        kind: "err",
-        msg: e instanceof Error ? e.message : "fetch failed",
+        kind: "ok",
+        msg: `logged · total attempts: ${body.total_attempts ?? "?"}`,
       });
-    } finally {
-      setPosting(false);
+      if (result === "solved" && !isDone) toggleDone();
     }
+    setPosting(false);
   }
 
   async function loadFailures() {
     setFailError("");
+    if (!state.apiOptIn) {
+      setFailError("API not connected — click Connect API in the dock.");
+      return;
+    }
+    const r = await safeFetch(
+      state.apiUrl.replace(/\/+$/, "") +
+        "/api/petal/mistakes/" +
+        encodeURIComponent(theoremId),
+    );
+    if (!r) {
+      setFailError("unreachable");
+      return;
+    }
+    if (!r.ok) {
+      setFailError(`HTTP ${r.status}`);
+      return;
+    }
     try {
-      const r = await fetch(
-        state.apiUrl.replace(/\/+$/, "") +
-          "/api/petal/mistakes/" +
-          encodeURIComponent(theoremId)
-      );
-      if (!r.ok) {
-        setFailError(`HTTP ${r.status}`);
-        return;
-      }
       const body = (await r.json()) as MistakesResp;
       setFailures(body);
-    } catch (e) {
-      setFailError(e instanceof Error ? e.message : "fetch failed");
+    } catch {
+      setFailError("bad JSON");
     }
   }
 
