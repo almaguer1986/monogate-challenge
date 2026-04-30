@@ -311,6 +311,172 @@
     },
 
     {
+      "theorem_id": "F1_at_0_1",
+      "lane": 2,
+      "lane_title": "Building Blocks",
+      "difficulty": 2,
+      "domain": "concrete witness / simp",
+      "statement": {
+        "natural_language": "Evaluate the canonical EML operator F1(x, y) = exp(x) − log(y) at the witness point (0, 1). The result is 1 because exp(0) = 1 and log(1) = 0.",
+        "latex": "F_1(0, 1) = e^{0} - \\log 1 = 1",
+        "lean4": "theorem F1_at_0_1 : F1 0 1 = 1 := by\n  simp [F1, Real.exp_zero, Real.log_one]"
+      },
+      "proof": {
+        "lean4_full": "theorem F1_at_0_1 : F1 0 1 = 1 := by\n  simp [F1, Real.exp_zero, Real.log_one]",
+        "lean4_step_by_step": [
+          {
+            "step": 1,
+            "tactic": "simp [F1, Real.exp_zero, Real.log_one]",
+            "explanation": "Unfold F1 (= exp(x) − log(y)) and rewrite both special values: Real.exp_zero gives exp(0) = 1; Real.log_one gives log(1) = 0. The arithmetic simplifies to 1 − 0 = 1.",
+            "tactic_rationale": "simp with explicit lemma list is the canonical way to discharge a goal that needs definitional unfolding plus two named identities. rfl alone won't close it because Real.exp and Real.log are not reducible.",
+            "common_mistakes": [
+              "Trying rfl: fails because exp/log are defined via limits, not pattern matching.",
+              "Forgetting to pass the lemma names — bare simp does not load Real.exp_zero by default in Lane-2 contexts."
+            ]
+          }
+        ]
+      },
+      "dependencies": [],
+      "unlocks": ["F2_ne_add"],
+      "source": { "file": "MonogateEML/AddLowerBound.lean", "line": 360 },
+      "tags": ["witness", "simp", "lane-2", "exp", "log"],
+      "metadata": {
+        "tactics_introduced": ["simp [..]"],
+        "cost_class": "p1-d1-w1-c0"
+      }
+    },
+
+    {
+      "theorem_id": "F2_ne_add",
+      "lane": 2,
+      "lane_title": "Building Blocks",
+      "difficulty": 3,
+      "domain": "non-equivalence / sign witness",
+      "statement": {
+        "natural_language": "F2(x, y) = exp(x) − log(−y) is not equal to x + y. The witness (0, −1) shows F2(0, −1) = 1, which is not 0 + (−1) = −1.",
+        "latex": "\\neg (\\forall x\\, y\\colon \\mathbb{R},\\; F_2(x, y) = x + y)",
+        "lean4": "theorem F2_ne_add : ¬ (∀ x y : ℝ, F2 x y = x + y) := by\n  intro h\n  have h01 := h 0 (-1)\n  simp only [F2, Real.exp_zero, neg_neg, Real.log_one] at h01\n  linarith"
+      },
+      "proof": {
+        "lean4_full": "theorem F2_ne_add : ¬ (∀ x y : ℝ, F2 x y = x + y) := by\n  intro h\n  have h01 := h 0 (-1)\n  simp only [F2, Real.exp_zero, neg_neg, Real.log_one] at h01\n  linarith",
+        "lean4_step_by_step": [
+          {
+            "step": 1,
+            "tactic": "intro h",
+            "explanation": "Negation is P → False. To prove ¬P, intro the hypothesis P and derive False from it.",
+            "tactic_rationale": "Standard reduction of ¬P to deriving False from P.",
+            "common_mistakes": []
+          },
+          {
+            "step": 2,
+            "tactic": "have h01 := h 0 (-1)",
+            "explanation": "Pick the witness (0, −1). neg_neg later flips the −(−1) back to +1 cleanly.",
+            "tactic_rationale": "The −1 second argument feeds log(−y) = log(1), which the next simp will reduce to 0.",
+            "common_mistakes": [
+              "Using (0, 1) instead — log(−1) is then log(−1) = 0 in Lean's convention, but the witness loses its narrative."
+            ]
+          },
+          {
+            "step": 3,
+            "tactic": "simp only [F2, Real.exp_zero, neg_neg, Real.log_one] at h01",
+            "explanation": "Unfold F2, fold −(−1) to 1, exp(0) to 1, log(1) to 0. h01 becomes 1 − 0 = 0 + (−1), i.e. 1 = −1.",
+            "tactic_rationale": "simp only with the explicit lemma list keeps the rewrite deterministic and minimal — exactly the four facts we need.",
+            "common_mistakes": [
+              "Omitting `neg_neg` leaves −(−1) as a goal blocker that linarith can't unfold."
+            ]
+          },
+          {
+            "step": 4,
+            "tactic": "linarith",
+            "explanation": "1 = −1 is a numeric contradiction; linarith finishes immediately.",
+            "tactic_rationale": "Once both sides reduce to concrete rationals, no auxiliary lemma is needed — linarith handles the linear inequality.",
+            "common_mistakes": []
+          }
+        ]
+      },
+      "dependencies": ["F1_at_0_1"],
+      "unlocks": ["F13_pos"],
+      "source": { "file": "MonogateEML/AddLowerBound.lean", "line": 125 },
+      "tags": ["non-equivalence", "linarith", "lane-2", "neg_neg"],
+      "metadata": {
+        "tactics_introduced": ["intro", "have", "linarith", "neg_neg"],
+        "cost_class": "p1-d1-w1-c0"
+      }
+    },
+
+    {
+      "theorem_id": "F13_pos",
+      "lane": 2,
+      "lane_title": "Building Blocks",
+      "difficulty": 1,
+      "domain": "positivity / term-mode",
+      "statement": {
+        "natural_language": "F13(x, y) = exp(x · log y) is strictly positive for all real inputs. This follows directly from Real.exp_pos: the exponential of any real number is positive.",
+        "latex": "\\forall x\\, y\\colon \\mathbb{R},\\; 0 < F_{13}(x, y)",
+        "lean4": "theorem F13_pos (x y : ℝ) : 0 < F13 x y := Real.exp_pos _"
+      },
+      "proof": {
+        "lean4_full": "theorem F13_pos (x y : ℝ) : 0 < F13 x y := Real.exp_pos _",
+        "lean4_step_by_step": [
+          {
+            "step": 1,
+            "tactic": "Real.exp_pos _",
+            "explanation": "F13 is defined as exp(x · log y). Real.exp_pos states 0 < exp z for any z : ℝ. The underscore lets Lean infer the argument by unification with the goal.",
+            "tactic_rationale": "Term-mode proof: when a single library lemma matches the goal up to unification, providing it directly is shorter than `by exact Real.exp_pos _`.",
+            "common_mistakes": [
+              "Writing `by exact Real.exp_pos _`: works but adds the tactic-mode wrapper for no benefit.",
+              "Writing `by positivity`: also works once the positivity extension is loaded, but Real.exp_pos is the named, discoverable lemma."
+            ]
+          }
+        ]
+      },
+      "dependencies": ["F2_ne_add"],
+      "unlocks": ["F13_F14_F15_F16_not_add"],
+      "source": { "file": "MonogateEML/AddLowerBound.lean", "line": 336 },
+      "tags": ["positivity", "term-mode", "lane-2", "exp"],
+      "metadata": {
+        "tactics_introduced": ["term-mode application"],
+        "cost_class": "p1-d1-w1-c0"
+      }
+    },
+
+    {
+      "theorem_id": "F13_F14_F15_F16_not_add",
+      "lane": 2,
+      "lane_title": "Building Blocks",
+      "difficulty": 4,
+      "domain": "packaging / conjunction",
+      "statement": {
+        "natural_language": "None of the four exp-type F16 operators (F13, F14, F15, F16fn) can equal real addition. Each refusal is already proved as its own theorem; this packaging combines them into a single conjunction.",
+        "latex": "\\big(\\neg \\forall xy.\\,F_{13}(x,y) = x+y\\big)\\,\\wedge\\,\\cdots\\,\\wedge\\,\\big(\\neg \\forall xy.\\,F_{16\\mathrm{fn}}(x,y) = x+y\\big)",
+        "lean4": "theorem F13_F14_F15_F16_not_add :\n    (¬ ∀ x y : ℝ, F13 x y = x + y) ∧\n    (¬ ∀ x y : ℝ, F14 x y = x + y) ∧\n    (¬ ∀ x y : ℝ, F15 x y = x + y) ∧\n    (¬ ∀ x y : ℝ, F16fn x y = x + y) :=\n  ⟨F13_ne_add, F14_ne_add, F15_ne_add, F16fn_ne_add⟩"
+      },
+      "proof": {
+        "lean4_full": "theorem F13_F14_F15_F16_not_add :\n    (¬ ∀ x y : ℝ, F13 x y = x + y) ∧\n    (¬ ∀ x y : ℝ, F14 x y = x + y) ∧\n    (¬ ∀ x y : ℝ, F15 x y = x + y) ∧\n    (¬ ∀ x y : ℝ, F16fn x y = x + y) :=\n  ⟨F13_ne_add, F14_ne_add, F15_ne_add, F16fn_ne_add⟩",
+        "lean4_step_by_step": [
+          {
+            "step": 1,
+            "tactic": "⟨F13_ne_add, F14_ne_add, F15_ne_add, F16fn_ne_add⟩",
+            "explanation": "Anonymous-constructor notation builds the four-way conjunction directly from the existing four theorems. Lean's And type is right-associated, so the four-element tuple matches the nested ∧ structure.",
+            "tactic_rationale": "When every component of a conjunction is already a named theorem, the anonymous constructor is the shortest possible proof — no tactic mode required.",
+            "common_mistakes": [
+              "Using `by exact ⟨...⟩` — the wrapping `by exact` adds noise without changing semantics.",
+              "Trying `constructor; constructor; constructor; ...` in tactic mode: works but is much more verbose than the direct term."
+            ]
+          }
+        ]
+      },
+      "dependencies": ["F13_pos"],
+      "unlocks": [],
+      "source": { "file": "MonogateEML/AddLowerBound.lean", "line": 348 },
+      "tags": ["conjunction", "term-mode", "lane-2", "packaging"],
+      "metadata": {
+        "tactics_introduced": ["⟨...⟩"],
+        "cost_class": null
+      }
+    },
+
+    {
       "theorem_id": "F1_ne_add",
       "lane": 3,
       "lane_title": "Arithmetic from Nothing",
