@@ -45,7 +45,7 @@ export default function Lane1Page() {
             fontFamily: "monospace",
           }}
         >
-          <a href="/learn" style={{ color: ACCENT, textDecoration: "none" }}>
+          <a href="/learn/lean" style={{ color: ACCENT, textDecoration: "none" }}>
             ← Back to lanes
           </a>
           {"  ·  "}Lane 1 of 6

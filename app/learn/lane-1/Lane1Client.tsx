@@ -953,7 +953,7 @@ function CompletionPanel({
           </span>
         </a>
         <a
-          href="/learn"
+          href="/learn/lean"
           style={{
             padding: "12px 22px",
             background: "transparent",
