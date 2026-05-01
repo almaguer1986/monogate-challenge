@@ -38,8 +38,8 @@ const FLOW_STEPS: { n: string; text: string; sub: string; highlight?: boolean }[
   },
   {
     n: "04",
-    text: "MachLib builds in 4.77 seconds",
-    sub: "Cold build. Laptop. Every time.",
+    text: "MachLib core builds in 6.54 seconds",
+    sub: "Cold build, core foundations. Laptop. Every time.",
   },
   {
     n: "05",
@@ -61,7 +61,7 @@ const TOOLKIT: { cmd: string; tagline: string; color: string }[] = [
   },
   {
     cmd: "import MachLib",
-    tagline: "Verify in 4.77 seconds — zero Mathlib dependency.",
+    tagline: "Verify against MachLib core in 6.54 seconds — zero Mathlib dependency.",
     color: C.green,
   },
 ];
