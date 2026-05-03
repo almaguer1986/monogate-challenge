@@ -1004,9 +1004,17 @@ PROFILE READING
           }}
         >
           <li>
-            <strong style={{ color: "#fff" }}>Browse the examples.</strong>{" "}
-            <Inline>monogate-forge/industries/</Inline> — 18 verticals with
-            real <Inline>.eml</Inline> files you can study.
+            <strong style={{ color: "#fff" }}>Explore the examples.</strong>{" "}
+            <Inline>examples/</Inline> ships 12 short, public teaching{" "}
+            <Inline>.eml</Inline> files. Upgrade to{" "}
+            <a
+              href="https://monogateforge.com/get-started"
+              style={{ color: "#fff", textDecoration: "underline" }}
+            >
+              Forge Pro
+            </a>{" "}
+            for access to 280+ verified industry kernels across
+            23 verticals.
           </li>
           <li>
             <strong style={{ color: "#fff" }}>Read the language guide.</strong>{" "}

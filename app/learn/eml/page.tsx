@@ -458,18 +458,18 @@ export default function LearnEMLHub() {
             }}
           >
             Six tracks, one per industry vertical. Each track walks through
-            real{" "}
-            <code
-              style={{
-                fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-                color: ACCENT_GOLD,
-              }}
+            the kinds of equations the vertical lives on — what the math is,
+            why chain order matters there, what proofs ship, and which
+            targets the kernel lands on. The pre-verified kernels themselves
+            are the proprietary product; tracks describe the surface without
+            shipping the source. Upgrade to{" "}
+            <a
+              href="https://monogateforge.com/get-started"
+              style={{ color: ACCENT_GOLD, textDecoration: "underline" }}
             >
-              industries/&lt;domain&gt;/
-            </code>{" "}
-            kernels — what the equations are, why they were chosen, what the
-            chain-order profile reveals, and which targets matter for that
-            domain.
+              Forge Pro
+            </a>{" "}
+            for access.
           </p>
           <div
             style={{
